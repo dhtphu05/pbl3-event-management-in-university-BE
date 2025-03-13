@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\pbl3-event-management-in-university-BE.props" />
+</Project>
