@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\pbl3-event-management-in-university-BE.props" />
-</Project>
