@@ -1,0 +1,6 @@
+@DUTEventManagementAPI_HostAddress = http://localhost:5044
+
+GET {{DUTEventManagementAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
