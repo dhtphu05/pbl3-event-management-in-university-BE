@@ -29,16 +29,21 @@ namespace DUTEventManagementAPI.Services
             return Convert.ToBase64String(randomNumber);
         }
 
-        public string GenerateTokenString(AppUser user)
+        public async Task<string> GenerateTokenString(AppUser user)
         {
-            var role = _userManager.GetRolesAsync(user).ToString();
-            var claims = new List<Claim> 
-            { 
+            // Await the async call to get the roles
+            var roles = await _userManager.GetRolesAsync(user);
+
+            // Create claims, including one claim per role
+            var claims = new List<Claim>
+            {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()!),
                 new Claim(ClaimTypes.Name, user.UserName!),
-                new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(ClaimTypes.Role, role!)
+                new Claim(ClaimTypes.Email, user.Email!)
             };
+
+            // Add each role as a separate Claim
+            claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -70,7 +75,7 @@ namespace DUTEventManagementAPI.Services
                 return response;
             }
             response.IsAuthenticated = true;
-            response.Token = GenerateTokenString(userResult);
+            response.Token = GenerateTokenString(userResult).Result;
             response.RefreshToken = GenerateRefreshTokenString();
 
             // Lưu RefreshToken 
@@ -122,7 +127,7 @@ namespace DUTEventManagementAPI.Services
             }
 
             response.IsAuthenticated = true;
-            response.Token = GenerateTokenString(user);
+            response.Token = GenerateTokenString(user).Result;
             response.RefreshToken = GenerateRefreshTokenString();
 
             user.RefreshToken = response.RefreshToken;

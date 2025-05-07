@@ -6,7 +6,7 @@ namespace DUTEventManagementAPI.Services
     {
         Task<bool> Register(AppUser user, string password);
         Task<LoginResponse> Login(string email, string password);
-        string GenerateTokenString(AppUser user);
+        Task<string> GenerateTokenString(AppUser user);
         string GenerateRefreshTokenString();
         Task<LoginResponse> RefreshToken(RefreshTokenModel model);
     }
