@@ -9,6 +9,7 @@ using DUTEventManagementAPI.Models;
 using System.Text;
 using Microsoft.Extensions.Options;
 using DUTEventManagementAPI.Services;
+using DUTEventManagementAPI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+// Adð FluentEmail services
+builder.Services.AddFluentEmail(builder.Configuration);
 
 // Add authentication services
 builder.Services.AddAuthentication(options =>
@@ -59,6 +63,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
