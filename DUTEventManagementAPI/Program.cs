@@ -10,6 +10,7 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using DUTEventManagementAPI.Services;
 using DUTEventManagementAPI.Extensions;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,21 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddDefaultTokenProviders();
 
 // Adð FluentEmail services
-builder.Services.AddFluentEmail(builder.Configuration);
+var emailSettings = builder.Configuration.GetSection("EmailSettings");
+var defaultFromEmail = emailSettings["DefaultSenderEmail"];
+var defaultSender = emailSettings["DefaultSender"];
+var host = emailSettings["Host"];
+var port = emailSettings.GetValue<int>("Port");
+var userName = emailSettings["UserName"];
+var password = emailSettings["Password"];
+
+Console.WriteLine($"DefaultSenderEmail: {defaultFromEmail}");
+Console.WriteLine($"Host: {host}");
+Console.WriteLine($"Port: {port}");
+
+builder.Services
+    .AddFluentEmail(defaultFromEmail, defaultSender)
+    .AddSmtpSender(host,port);
 
 // Add authentication services
 builder.Services.AddAuthentication(options =>
@@ -66,6 +81,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
