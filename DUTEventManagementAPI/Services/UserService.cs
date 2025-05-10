@@ -10,7 +10,6 @@ namespace DUTEventManagementAPI.Services
         {
             _userManager = userManager;
         }
-
         public List<AppUser> GetAllUsers()
         {
             var users = _userManager.Users.ToList();

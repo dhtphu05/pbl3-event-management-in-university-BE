@@ -5,7 +5,7 @@
         public string EventId { get; set; } = Guid.NewGuid().ToString();
         public string EventName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public string AttendanceType { get; set; } = string.Empty;
+        public string AttendanceType { get; set; } = string.Empty; //online or offline
         public string Location { get; set; } = "54 Nguyễn Lương Bằng, Liên Chiểu, Đà Nẵng";
         public double Longitude { get; set; } = 16.0748;
         public double Latitude { get; set; } = 108.152;

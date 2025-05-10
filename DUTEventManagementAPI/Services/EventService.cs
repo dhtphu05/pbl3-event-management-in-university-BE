@@ -6,9 +6,11 @@ namespace DUTEventManagementAPI.Services
     public class EventService : IEventService
     {
         private readonly AppDbContext _context;
-        public EventService(AppDbContext context)
+        private readonly ICategoryService _categoryService;
+        public EventService(AppDbContext context, ICategoryService categoryService)
         {
             _context = context;
+            _categoryService = categoryService;
         }
         public List<Event> GetAllEvents()
         {
@@ -27,8 +29,8 @@ namespace DUTEventManagementAPI.Services
             foreach (var e in allEvents)
             {
                 double distance = GetDistanceInKm(e.Latitude, e.Longitude, newEvent.Latitude, newEvent.Longitude);
-                bool isTimeOverlap = newEvent.StartDate < e.StartDate && newEvent.EndDate > e.StartDate
-                                  || newEvent.StartDate < e.EndDate && newEvent.EndDate > e.EndDate;
+                bool isTimeOverlap = (newEvent.StartDate < e.StartDate && newEvent.EndDate > e.StartDate)
+                                  || (newEvent.StartDate < e.EndDate && newEvent.EndDate > e.EndDate);
 
                 if (distance <= 1.0)
                 {

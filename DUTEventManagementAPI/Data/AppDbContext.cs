@@ -12,7 +12,12 @@ namespace DUTEventManagementAPI.Data
         }
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Event> Events { get; set; }
-        //public DbSet<Registration> Registrations { get; set; }
+        public DbSet<Registration> Registrations { get; set; }
+        public DbSet<EventCategory> EventCategories { get; set; }
+        public DbSet<TimeSlot> TimeSlots { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<EventImage> EventImages { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

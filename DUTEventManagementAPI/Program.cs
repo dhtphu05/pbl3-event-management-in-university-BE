@@ -82,6 +82,10 @@ builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IEventCategoryService, EventCategoryService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
