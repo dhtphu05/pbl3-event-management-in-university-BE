@@ -11,8 +11,14 @@ namespace DUTEventManagementAPI.Data
         {
         }
         public DbSet<AppUser> AppUsers { get; set; }
-        //public DbSet<Event> Events { get; set; }
-        //public DbSet<Registration> Registrations { get; set; }
+        public DbSet<Event> Events { get; set; }
+        public DbSet<Registration> Registrations { get; set; }
+        public DbSet<EventCategory> EventCategories { get; set; }
+        public DbSet<TimeSlot> TimeSlots { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<EventImage> EventImages { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -37,6 +43,12 @@ namespace DUTEventManagementAPI.Data
                 Name = "Organizer",
                 NormalizedName = "Organizer"
             });
+            builder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Id = "4",
+                Name = "Union",
+                NormalizedName = "Union"
+            }); 
             //builder.Entity<AppUser>();
             //.HasMany(e => e.Events)
             //.WithOne(e => e.AppUser)

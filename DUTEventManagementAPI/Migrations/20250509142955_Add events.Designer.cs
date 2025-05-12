@@ -4,6 +4,7 @@ using DUTEventManagementAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DUTEventManagementAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250509142955_Add events")]
+    partial class Addevents
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -113,43 +116,6 @@ namespace DUTEventManagementAPI.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("DUTEventManagementAPI.Models.Attendance", b =>
-                {
-                    b.Property<string>("AttendanceId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("AttendanceDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("float");
-
-                    b.Property<string>("RegistrationId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AttendanceId");
-
-                    b.ToTable("Attendances");
-                });
-
-            modelBuilder.Entity("DUTEventManagementAPI.Models.Category", b =>
-                {
-                    b.Property<string>("CategoryId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CategoryId");
-
-                    b.ToTable("Categories");
-                });
-
             modelBuilder.Entity("DUTEventManagementAPI.Models.Event", b =>
                 {
                     b.Property<string>("EventId")
@@ -208,92 +174,6 @@ namespace DUTEventManagementAPI.Migrations
                     b.HasKey("EventId");
 
                     b.ToTable("Events");
-                });
-
-            modelBuilder.Entity("DUTEventManagementAPI.Models.EventCategory", b =>
-                {
-                    b.Property<string>("EventCategoryId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("CategoryId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EventId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("EventCategoryId");
-
-                    b.ToTable("EventCategories");
-                });
-
-            modelBuilder.Entity("DUTEventManagementAPI.Models.EventImage", b =>
-                {
-                    b.Property<string>("EventImageId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("EventId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("isThumbnail")
-                        .HasColumnType("bit");
-
-                    b.HasKey("EventImageId");
-
-                    b.ToTable("EventImages");
-                });
-
-            modelBuilder.Entity("DUTEventManagementAPI.Models.Registration", b =>
-                {
-                    b.Property<string>("RegistrationId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("EventId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("RegistrationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("RegistrationId");
-
-                    b.ToTable("Registrations");
-                });
-
-            modelBuilder.Entity("DUTEventManagementAPI.Models.TimeSlot", b =>
-                {
-                    b.Property<string>("TimeSlotId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("CreateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("EventId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("TimeSlotId");
-
-                    b.ToTable("TimeSlots");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
