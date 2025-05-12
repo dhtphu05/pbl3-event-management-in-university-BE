@@ -9,5 +9,6 @@ namespace DUTEventManagementAPI.Services
         List<Event> GetAllEvents();
         Task<Event?> GetEventByIdAsync(string eventId);
         Event UpdateEventAsync(string eventId, Event updatedEvent);
+        double GetDistanceInKm(double lat1, double lng1, double lat2, double lng2);
     }
 }

@@ -56,7 +56,7 @@ namespace DUTEventManagementAPI.Services
             result.Succeeded = true;
             return result;
         }
-        private double GetDistanceInKm(double lat1, double lng1, double lat2, double lng2)
+        public double GetDistanceInKm(double lat1, double lng1, double lat2, double lng2)
         {
             const double R = 6371; // bán kính trái đất (km)
             var dLat = ToRadians(lat2 - lat1);
@@ -68,7 +68,7 @@ namespace DUTEventManagementAPI.Services
             return R * c;
         }
 
-        private double ToRadians(double deg) => deg * (Math.PI / 180);
+        public double ToRadians(double deg) => deg * (Math.PI / 180);
         public Event UpdateEventAsync(string eventId, Event updatedEvent)
         {
             var eventToUpdate = _context.Events.Find(eventId);

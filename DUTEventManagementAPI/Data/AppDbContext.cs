@@ -17,6 +17,7 @@ namespace DUTEventManagementAPI.Data
         public DbSet<TimeSlot> TimeSlots { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<EventImage> EventImages { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
