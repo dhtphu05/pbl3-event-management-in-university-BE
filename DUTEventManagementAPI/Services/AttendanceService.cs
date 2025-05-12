@@ -89,9 +89,14 @@ namespace DUTEventManagementAPI.Services
             return false;
         }
 
-        public List<Attendance> GetAttendancesByRegistrationId(string registrationId)
+        public Attendance GetAttendanceByRegistrationId(string registrationId)
         {
-            return _context.Attendances.Where(a => a.RegistrationId == registrationId).ToList();
+            var result =_context.Attendances.FirstOrDefault(a => a.RegistrationId == registrationId);
+            if (result == null)
+            {
+                throw new Exception("Attendance not found");
+            }
+            return result;
         }
     }
 }

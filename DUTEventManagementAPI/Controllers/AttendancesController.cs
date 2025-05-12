@@ -27,8 +27,8 @@ namespace DUTEventManagementAPI.Controllers
         [HttpGet("{registrationId}")]
         public IActionResult GetAttendancesByRegistrationId(string registrationId)
         {
-            var attendances = _attendanceService.GetAttendancesByRegistrationId(registrationId);
-            if (attendances == null || attendances.Count == 0)
+            var attendances = _attendanceService.GetAttendanceByRegistrationId(registrationId);
+            if (attendances == null)
             {
                 return NotFound("No attendances found for this registration ID");
             }
