@@ -8,6 +8,6 @@ namespace DUTEventManagementAPI.Services
         List<Event> GetEventsUserRegisteredFor(string userId);
         List<AppUser> GetUsersRegisteredForEvent(string eventId);
         Registration RegisterUserForEvent(string userId, string eventId);
-        bool RemoveRegistration(string registrationId);
+        bool RemoveRegistration(string eventId, string userId);
     }
 }

@@ -40,16 +40,14 @@ namespace DUTEventManagementAPI.Services
             var eventIds = registrations.Select(r => r.EventId).ToList();
             return _context.Events.Where(e => eventIds.Contains(e.EventId)).ToList();
         }
-        public bool RemoveRegistration(string registrationId)
+        public bool RemoveRegistration(string eventId, string userId)
         {
-            var registration = _context.Registrations.FirstOrDefault(r => r.RegistrationId == registrationId);
-            if (registration != null)
-            {
-                _context.Registrations.Remove(registration);
-                _context.SaveChanges();
-                return true;
-            }
-            return false;
+            var registration = _context.Registrations
+                .FirstOrDefault(r => r.EventId == eventId && r.UserId == userId);
+            if (registration == null)
+                throw new Exception("Registration not found");
+            _context.Registrations.Remove(registration);
+            return _context.SaveChanges() > 0;
         }
     }
 }

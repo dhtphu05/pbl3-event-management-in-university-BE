@@ -56,10 +56,10 @@ namespace DUTEventManagementAPI.Controllers
                 return BadRequest($"Error: {ex.Message}");
             }
         }
-        [HttpDelete("{registrationId}")]
-        public IActionResult RemoveRegistration(string registrationId)
+        [HttpDelete("{eventId}/{userId}")]
+        public IActionResult RemoveRegistration(string eventId, string userId)
         {
-            var result = _registrationService.RemoveRegistration(registrationId);
+            var result = _registrationService.RemoveRegistration(eventId, userId);
             if (!result)
             {
                 return NotFound("Registration not found");
