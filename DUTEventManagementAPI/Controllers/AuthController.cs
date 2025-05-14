@@ -7,6 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using DUTEventManagementAPI.Services;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
 
 
 namespace DUTEventManagementAPI.Controllers
@@ -62,6 +64,44 @@ namespace DUTEventManagementAPI.Controllers
             }
 
             return Unauthorized();
+        }
+
+        [HttpGet("Login/Google")]
+        public IActionResult GoogleLogin([FromQuery] string returnUrl)
+        {
+            if (string.IsNullOrEmpty(returnUrl))
+            {
+                return BadRequest(new { message = "Return URL is required" });
+            }
+            LinkGenerator linkGenerator = HttpContext.RequestServices.GetRequiredService<LinkGenerator>();
+
+
+            var properties = _authService.ConfigureGoogleAuthenticationProperties(
+                "Google",
+                linkGenerator.GetPathByName(HttpContext, "GoogleLoginCallback") + $"?returnUrl={returnUrl}"
+            );
+
+            return Challenge(properties, ["Google"]);
+        }
+
+        [HttpGet("Login/Google/Callback", Name = "GoogleLoginCallback")]
+        public async Task<IActionResult> GoogleLoginCallBack([FromQuery] string returnUrl)
+        {
+            Console.WriteLine("GoogleLoginCallBack invoked");
+            var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+            if (!result.Succeeded)
+                return Unauthorized(new { message = "External login failed" });
+
+            var authResult = await _authService.LoginWithGoogle(result.Principal);
+
+            if (!authResult.IsAuthenticated)
+                return Unauthorized(new { message = "External login failed" });
+
+            if (!string.IsNullOrEmpty(returnUrl))
+                return Redirect(returnUrl);
+
+            return BadRequest(new { authResult, message = "No return url" });
         }
     }
 }

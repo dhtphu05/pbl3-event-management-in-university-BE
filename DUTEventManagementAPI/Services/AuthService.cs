@@ -1,4 +1,6 @@
-﻿using DUTEventManagementAPI.Models;
+﻿using Azure;
+using DUTEventManagementAPI.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
@@ -12,13 +14,23 @@ namespace DUTEventManagementAPI.Services
     public class AuthService : IAuthService
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
         private readonly IConfiguration _config;
 
-        public AuthService(UserManager<AppUser> userManager, IConfiguration config)
+        public AuthService(UserManager<AppUser> userManager, IConfiguration config, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _config = config;
+            _signInManager = signInManager;
+        }
+
+        public AuthenticationProperties ConfigureGoogleAuthenticationProperties(string provider, string redirectUri)
+        {
+            Console.WriteLine(provider);
+            Console.WriteLine(redirectUri);
+            return _signInManager.ConfigureExternalAuthenticationProperties(
+            provider, redirectUri);
         }
 
         public string GenerateRefreshTokenString()
@@ -94,6 +106,77 @@ namespace DUTEventManagementAPI.Services
             }
             return response;
 
+        }
+
+        public async Task<LoginResponse> LoginWithGoogle(ClaimsPrincipal? claimsPrincipal)
+        {
+            if (claimsPrincipal == null)
+            {
+                Console.WriteLine("ClaimsPrincipal is null");
+                throw new Exception("ClaimsPrincipal is null");
+            }
+            var email = claimsPrincipal?.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrEmpty(email))
+            {
+                Console.WriteLine("Email is null");
+                throw new Exception("Email is null");
+            }   
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                var newUser = new AppUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                };
+                var userResult = await _userManager.CreateAsync(newUser);
+                if (!userResult.Succeeded)
+                {
+                    foreach (var error in userResult.Errors)
+                    {
+                        Console.WriteLine(error.Description);
+                    }
+                    throw new Exception("User creation failed");
+                }
+                user = newUser;
+            }
+
+            var info = new UserLoginInfo("Google", 
+                                claimsPrincipal?.FindFirstValue(ClaimTypes.Email) ?? string.Empty, 
+                                "Google");
+
+            var loginResult = await _userManager.AddLoginAsync(user, info);
+            if (!loginResult.Succeeded)
+            {
+                foreach (var error in loginResult.Errors)
+                {
+                    Console.WriteLine(error.Description);
+                }
+                throw new Exception("User login failed");
+            }
+
+            var response = new LoginResponse();
+
+            response.IsAuthenticated = true;
+            response.Token = GenerateTokenString(user).Result;
+            response.RefreshToken = GenerateRefreshTokenString();
+
+            // Lưu RefreshToken 
+            user.RefreshToken = response.RefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(1);
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    Console.WriteLine(error.Description);
+                }
+                return response;
+            }
+            return response;
         }
 
         public async Task<LoginResponse> RefreshToken(RefreshTokenModel model)
