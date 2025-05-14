@@ -42,6 +42,8 @@ namespace DUTEventManagementAPI.Services
             {
                 throw new Exception("Event image not found");
             }
+            // Delete the image file from the server if it exists
+
             _context.EventImages.Remove(eventImage);
             return _context.SaveChanges() > 0;
         }
