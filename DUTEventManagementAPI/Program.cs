@@ -23,6 +23,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
+    .AddSignInManager()
     .AddDefaultTokenProviders();
 
 // Adð FluentEmail services
@@ -47,6 +48,25 @@ builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddCookie()
+    .AddGoogle(options =>
+    {
+        var clientId = builder.Configuration["Authentication:Google:ClientId"];
+        if (string.IsNullOrEmpty(clientId))
+        {
+            throw new ArgumentNullException("Google ClientId is not configured.");
+        }
+
+        var clientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        if (string.IsNullOrEmpty(clientSecret))
+        {
+            throw new ArgumentNullException("Google ClientSecret is not configured.");
+        }
+        options.ClientId = clientId;
+        options.ClientSecret = clientSecret;
+        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
     {
@@ -87,15 +107,17 @@ builder.Services.AddScoped<IEventCategoryService, EventCategoryService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IEventImageService, EventImageService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:5173", "https://localhost:7024", "http://localhost:5044")
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
