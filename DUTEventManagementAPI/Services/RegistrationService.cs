@@ -1,5 +1,6 @@
 ﻿using DUTEventManagementAPI.Models;
 using DUTEventManagementAPI.Data;
+using DUTEventManagementAPI.Services.Interfaces;
 namespace DUTEventManagementAPI.Services
 {
     public class RegistrationService : IRegistrationService

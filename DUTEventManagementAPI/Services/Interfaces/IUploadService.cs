@@ -1,4 +1,4 @@
-﻿namespace DUTEventManagementAPI.Services
+﻿namespace DUTEventManagementAPI.Services.Interfaces
 {
     public interface IUploadService
     {

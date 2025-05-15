@@ -1,5 +1,6 @@
 ﻿using Azure;
 using DUTEventManagementAPI.Models;
+using DUTEventManagementAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -126,6 +127,7 @@ namespace DUTEventManagementAPI.Services
             {
                 var newUser = new AppUser
                 {
+                    FullName = claimsPrincipal?.FindFirstValue(ClaimTypes.Name) ?? string.Empty,
                     UserName = email,
                     Email = email,
                     EmailConfirmed = true,

@@ -9,6 +9,7 @@ using System.Text;
 using DUTEventManagementAPI.Services;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication;
+using DUTEventManagementAPI.Services.Interfaces;
 
 
 namespace DUTEventManagementAPI.Controllers

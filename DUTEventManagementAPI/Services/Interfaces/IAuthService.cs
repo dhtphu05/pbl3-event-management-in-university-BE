@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
 
-namespace DUTEventManagementAPI.Services
+namespace DUTEventManagementAPI.Services.Interfaces
 {
     public interface IAuthService
     {
