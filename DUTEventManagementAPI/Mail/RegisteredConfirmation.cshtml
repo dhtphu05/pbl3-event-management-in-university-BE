@@ -1,0 +1,230 @@
+﻿@model DUTEventManagementAPI.Models.Event
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;500;600&display=swap');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .top-accent {
+            height: 10px;
+            background: linear-gradient(90deg, #c59d5f, #e2ba74);
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+        }
+
+            .header h1 {
+                font-family: 'Playfair Display', serif;
+                margin: 0;
+                color: #2d3436;
+                font-size: 32px;
+                letter-spacing: 1px;
+                font-weight: 700;
+            }
+
+            .header::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100px;
+                height: 3px;
+                background: linear-gradient(90deg, #c59d5f, #e2ba74);
+            }
+
+        .event-details {
+            padding: 40px 60px;
+        }
+
+            .event-details p {
+                margin-bottom: 16px;
+                font-size: 16px;
+                color: #555;
+            }
+
+        .event-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: #c59d5f;
+            text-align: center;
+            margin: 30px 0;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        .detail-icon {
+            flex: 0 0 40px;
+            height: 40px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(197, 157, 95, 0.1);
+            border-radius: 50%;
+            color: #c59d5f;
+        }
+
+        .detail-content {
+            flex: 1;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #444;
+        }
+
+        .detail-value {
+            font-weight: 400;
+            color: #666;
+        }
+
+        .footer {
+            padding: 20px 60px 40px;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .signature {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+            margin-top: 25px;
+        }
+
+        .envelope-icon {
+            margin-bottom: -5px;
+        }
+
+        .gold-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: linear-gradient(90deg, #c59d5f, #e2ba74);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(197, 157, 95, 0.3);
+        }
+
+            .gold-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(197, 157, 95, 0.4);
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-accent"></div>
+        <div class="header">
+            <h1>THÔNG BÁO SỰ KIỆN</h1>
+        </div>
+        <div class="event-details">
+            <p>Kính gửi Quý khách,</p>
+            <p>Ban tổ chức trân trọng kính mời Quý khách tham dự:</p>
+
+            <h2 class="event-name">@Model.EventName</h2>
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </div>
+                <div class="detail-content">
+                    <div class="detail-label">Thời gian</div>
+                    <div class="detail-value">@Model.StartDate.ToString("dddd, dd MMMM yyyy")</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                <div class="detail-content">
+                    <div class="detail-label">Giờ</div>
+                    <div class="detail-value">@Model.StartDate.ToString("HH:mm") - @Model.EndDate.ToString("HH:mm") GMT+7</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                </div>
+                <div class="detail-content">
+                    <div class="detail-label">Địa điểm</div>
+                    <div class="detail-value">@Model.Location</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="#" class="gold-button">Xác nhận tham dự</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="signature">Trân trọng kính mời,</p>
+            <p>Ban tổ chức</p>
+            <p class="timestamp">
+                <svg class="envelope-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                Gửi vào: @DateTime.Now.ToString("dd/MM/yyyy HH:mm")
+            </p>
+        </div>
+    </div>
+</body>
+</html>
