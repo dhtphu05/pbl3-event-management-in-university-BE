@@ -1,4 +1,6 @@
-﻿using DUTEventManagementAPI.Services;
+﻿using DUTEventManagementAPI.Models;
+using DUTEventManagementAPI.Services;
+using DUTEventManagementAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,16 +17,12 @@ namespace DUTEventManagementAPI.Controllers
                 ?? throw new ArgumentNullException(nameof(emailService));
         }
 
-        [HttpGet("SingleMail")]
-        public async Task<IActionResult> SendSingleEmail()
+        [HttpGet]
+        public IActionResult Get()
         {
-            EmailMetadata emailMetadata = new("john.doe@gmail.com",
-                "FluentEmail Test email",
-                "This is a test email from FluentEmail.");
-
-            await _emailService.Send(emailMetadata);
-
-            return Ok();
+            var message = new Message(new string[] { "noreply.itf.dut.event@gmail.com" }, "Test email", "This is the content from our email.");
+            _emailService.SendEmail(message);
+            return NoContent();
         }
     }
 }

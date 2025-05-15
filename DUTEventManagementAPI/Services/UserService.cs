@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using DUTEventManagementAPI.Models;
+using DUTEventManagementAPI.Services.Interfaces;
 
 namespace DUTEventManagementAPI.Services
 {

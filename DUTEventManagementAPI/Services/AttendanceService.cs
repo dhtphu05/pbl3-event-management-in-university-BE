@@ -1,6 +1,7 @@
 ﻿using DUTEventManagementAPI.Models;
 using DUTEventManagementAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using DUTEventManagementAPI.Services.Interfaces;
 
 namespace DUTEventManagementAPI.Services
 {

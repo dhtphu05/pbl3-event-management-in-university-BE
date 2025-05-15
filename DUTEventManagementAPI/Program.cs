@@ -9,8 +9,8 @@ using DUTEventManagementAPI.Models;
 using System.Text;
 using Microsoft.Extensions.Options;
 using DUTEventManagementAPI.Services;
-using DUTEventManagementAPI.Extensions;
 using Microsoft.Extensions.Configuration;
+using DUTEventManagementAPI.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,22 +26,16 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-// Adð FluentEmail services
-var emailSettings = builder.Configuration.GetSection("EmailSettings");
-var defaultFromEmail = emailSettings["DefaultSenderEmail"];
-var defaultSender = emailSettings["DefaultSender"];
-var host = emailSettings["Host"];
-var port = emailSettings.GetValue<int>("Port");
-var userName = emailSettings["UserName"];
-var password = emailSettings["Password"];
-
-Console.WriteLine($"DefaultSenderEmail: {defaultFromEmail}");
-Console.WriteLine($"Host: {host}");
-Console.WriteLine($"Port: {port}");
-
-builder.Services
-    .AddFluentEmail(defaultFromEmail, defaultSender)
-    .AddSmtpSender(host,port);
+//add email services
+var emailConfig = builder.Configuration
+        .GetSection("EmailConfiguration")
+        .Get<EmailConfiguration>();
+Console.WriteLine(emailConfig);
+if (emailConfig == null)
+{
+    throw new ArgumentNullException("EmailConfiguration is not configured.");
+}
+builder.Services.AddSingleton(emailConfig);
 
 // Add authentication services
 builder.Services.AddAuthentication(options =>
@@ -108,6 +102,7 @@ builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IEventImageService, EventImageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -130,8 +125,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAllOrigins");
-
-app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();

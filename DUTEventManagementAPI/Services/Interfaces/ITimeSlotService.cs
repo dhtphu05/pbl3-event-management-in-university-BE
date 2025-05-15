@@ -1,6 +1,6 @@
 ﻿using DUTEventManagementAPI.Models;
 
-namespace DUTEventManagementAPI.Services
+namespace DUTEventManagementAPI.Services.Interfaces
 {
     public interface ITimeSlotService
     {

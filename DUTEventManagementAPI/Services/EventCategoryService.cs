@@ -1,5 +1,6 @@
 ﻿using DUTEventManagementAPI.Data;
 using DUTEventManagementAPI.Models;
+using DUTEventManagementAPI.Services.Interfaces;
 namespace DUTEventManagementAPI.Services
 {
     public class EventCategoryService : IEventCategoryService

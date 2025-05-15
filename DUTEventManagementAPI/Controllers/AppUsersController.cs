@@ -8,7 +8,7 @@ using System.Text;
 using System.Security.Claims;
 using DUTEventManagementAPI.Data;
 using DUTEventManagementAPI.Models;
-using DUTEventManagementAPI.Services;
+using DUTEventManagementAPI.Services.Interfaces;
 
 namespace DUTEventManagementAPI.Controllers
 {
