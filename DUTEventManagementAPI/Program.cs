@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using DUTEventManagementAPI.Models;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Options;
 using DUTEventManagementAPI.Services;
 using Microsoft.Extensions.Configuration;
@@ -90,6 +91,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddRazorComponents();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUploadService, UploadService>();
@@ -103,6 +105,10 @@ builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IEventImageService, EventImageService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// email template
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -130,5 +136,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseStaticFiles();
 
 app.Run();
