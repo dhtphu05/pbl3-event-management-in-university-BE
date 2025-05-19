@@ -1,0 +1,254 @@
+﻿@model DUTEventManagementAPI.Models.Event
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông báo sự kiện</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .top-accent {
+            height: 10px;
+            background: linear-gradient(90deg, #c59d5f, #e2ba74);
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            position: relative;
+        }
+
+            .header h1 {
+                margin: 0;
+                color: #2d3436;
+                font-size: 32px;
+                letter-spacing: 1px;
+                font-weight: 700;
+            }
+
+            .header::after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100px;
+                height: 3px;
+                background: linear-gradient(90deg, #c59d5f, #e2ba74);
+            }
+
+        .event-details {
+            padding: 40px 60px;
+        }
+
+            .event-details p {
+                margin-bottom: 16px;
+                font-size: 16px;
+                color: #555;
+            }
+
+        .event-name {
+            font-size: 28px;
+            color: #c59d5f;
+            text-align: center;
+            margin: 30px 0;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: bold;
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 20px;
+            align-items: flex-start;
+        }
+
+        .detail-icon {
+            flex: 0 0 40px;
+            height: 40px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(197, 157, 95, 0.1);
+            border-radius: 50%;
+            color: #c59d5f;
+        }
+
+        .detail-content {
+            flex: 1;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #444;
+        }
+
+        .detail-value {
+            font-weight: 400;
+            color: #666;
+        }
+
+        .footer {
+            padding: 20px 60px 40px;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .signature {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #999;
+            margin-top: 25px;
+        }
+
+        .gold-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: linear-gradient(90deg, #c59d5f, #e2ba74);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(197, 157, 95, 0.3);
+        }
+
+            .gold-button:hover {
+                background: linear-gradient(90deg, #e2ba74, #c59d5f);
+            }
+
+        /* Responsive */
+        @@media (max-width: 600px) {
+            .container {
+                margin: 20px;
+            }
+
+            .event-details {
+                padding: 20px 30px;
+            }
+
+            .footer {
+                padding: 15px 30px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-accent"></div>
+        <div class="header">
+            <h1>THÔNG BÁO SỰ KIỆN</h1>
+        </div>
+        <div class="event-details">
+            <p>Kính gửi Quý khách,</p>
+            <p>Ban tổ chức trân trọng kính mời Quý khách tham dự:</p>
+
+            <h2 class="event-name">@Model.EventName</h2>
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #c59d5f; border-radius: 4px;">
+                    <p style="margin: 0; font-style: italic;">@Model.Description</p>
+                </div>
+            }
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    📅
+                </div>
+                <div class="detail-content">
+                    <div class="detail-label">Thời gian</div>
+                    <div class="detail-value">@Model.StartDate.ToString("dddd, dd MMMM yyyy", new System.Globalization.CultureInfo("vi-VN"))</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    🕐
+                </div>
+                <div class="detail-content">
+                    <div class="detail-label">Giờ</div>
+                    <div class="detail-value">@Model.StartDate.ToString("HH:mm") - @Model.EndDate.ToString("HH:mm") GMT+7</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    📍
+                </div>
+                <div class="detail-content">
+                    <div class="detail-label">Địa điểm</div>
+                    <div class="detail-value">@Model.Location</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    👥
+                </div>
+                <div class="detail-content">
+                    <div class="detail-label">Số lượng tham gia</div>
+                    <div class="detail-value">Tối đa @Model.Capacity người</div>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-icon">
+                    💻
+                </div>
+                <div class="detail-content">
+                    <div class="detail-label">Hình thức</div>
+                    <div class="detail-value">@(Model.AttendanceType == "online" ? "Trực tuyến" : "Trực tiếp")</div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.PlanLink))
+            {
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="@Model.PlanLink" class="gold-button">Xem chi tiết sự kiện</a>
+                </div>
+            }
+        </div>
+
+        <div class="footer">
+            <p class="signature">Trân trọng kính mời,</p>
+            <p>Ban tổ chức DUT Event Management</p>
+            <p class="timestamp">
+                📧 Gửi vào: @DateTime.Now.ToString("dd/MM/yyyy HH:mm", new System.Globalization.CultureInfo("vi-VN"))
+            </p>
+        </div>
+    </div>
+</body>
+</html>

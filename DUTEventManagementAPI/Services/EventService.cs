@@ -44,7 +44,6 @@ namespace DUTEventManagementAPI.Services
                 }
             }
 
-            // Nếu có lỗi thì trả về
             if (result.Errors.Count > 0)
             {
                 result.Succeeded = false;
