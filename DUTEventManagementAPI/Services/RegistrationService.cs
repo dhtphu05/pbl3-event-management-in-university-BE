@@ -21,7 +21,7 @@ namespace DUTEventManagementAPI.Services
                 throw new Exception("User not found");
 
             var existingRegistration = _context.Registrations
-                .FirstOrDefault(r => r.UserId == userId && r.EventId == eventId);
+                .FirstOrDefault(r => r.UserId == userId && r.EventId == eventId);   
             if (existingRegistration != null)
                 throw new Exception("User already registered for this event");
             
