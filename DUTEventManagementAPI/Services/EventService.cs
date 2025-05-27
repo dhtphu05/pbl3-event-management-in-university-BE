@@ -50,6 +50,21 @@ namespace DUTEventManagementAPI.Services
                 return result;
             }
 
+            var host = _context.Users.Find(newEvent.HostId);
+            if (host == null)
+            {
+                throw new Exception("Người tổ chức không tồn tại trong hệ thống.");
+            }
+            // Kiểm tra scope
+            if (newEvent.Scope == "private")
+            {
+                _context.EventFacultyScopes.Add(new EventFacultyScope
+                {
+                    EventId = newEvent.EventId,
+                    FacultyId = host.FacultyId
+                });
+            }
+
             // Tạo sự kiện nếu hợp lệ
             _context.Events.Add(newEvent);
             await _context.SaveChangesAsync();
@@ -76,8 +91,8 @@ namespace DUTEventManagementAPI.Services
             {
                 Console.WriteLine("Event not found");
                 throw new Exception("Event not found");
-            } 
-            
+            }
+
             eventToUpdate.EventName = updatedEvent.EventName ?? eventToUpdate.EventName;
             eventToUpdate.Description = updatedEvent.Description ?? eventToUpdate.Description;
             eventToUpdate.AttendanceType = updatedEvent.AttendanceType ?? eventToUpdate.AttendanceType;
@@ -87,6 +102,10 @@ namespace DUTEventManagementAPI.Services
             eventToUpdate.StartDate = updatedEvent.StartDate != DateTime.MinValue ? updatedEvent.StartDate : eventToUpdate.StartDate;
             eventToUpdate.EndDate = updatedEvent.EndDate != DateTime.MinValue ? updatedEvent.EndDate : eventToUpdate.EndDate;
             eventToUpdate.Capacity = updatedEvent.Capacity != 0 ? updatedEvent.Capacity : eventToUpdate.Capacity;
+            eventToUpdate.IsOpenedForRegistration = updatedEvent.IsOpenedForRegistration != eventToUpdate.IsOpenedForRegistration ? updatedEvent.IsOpenedForRegistration : eventToUpdate.IsOpenedForRegistration;
+            eventToUpdate.IsCancelled = updatedEvent.IsCancelled != eventToUpdate.IsCancelled ? updatedEvent.IsCancelled : eventToUpdate.IsCancelled;
+            eventToUpdate.IsRestricted = updatedEvent.IsRestricted != eventToUpdate.IsRestricted ? updatedEvent.IsRestricted : eventToUpdate.IsRestricted;
+            eventToUpdate.Scope = updatedEvent.Scope ?? eventToUpdate.Scope;
             eventToUpdate.HostId = updatedEvent.HostId ?? eventToUpdate.HostId;
             eventToUpdate.LogoUrl = updatedEvent.LogoUrl ?? eventToUpdate.LogoUrl;
             eventToUpdate.CoverUrl = updatedEvent.CoverUrl ?? eventToUpdate.CoverUrl;
@@ -101,6 +120,100 @@ namespace DUTEventManagementAPI.Services
             var eventToDelete = await GetEventByIdAsync(eventId);
             if (eventToDelete == null) return false;
             _context.Events.Remove(eventToDelete);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> AddFacultyToScope(string eventId, string facultyId)
+        {
+            var eventToUpdate = await GetEventByIdAsync(eventId);
+            if (eventToUpdate == null) return false;
+            if (eventToUpdate.Scope == "public" || eventToUpdate.Scope == "private")
+            {
+                throw new Exception("Không thể thêm khoa vào phạm vi của sự kiện phạm vi custom");
+            }
+            if (eventToUpdate.Scope.Contains(facultyId))
+            {
+                throw new Exception("Khoa đã được thêm vào phạm vi của sự kiện này trước đó.");
+            }
+            var scope = new EventFacultyScope
+            {
+                EventId = eventId,
+                FacultyId = facultyId
+            };
+            _context.EventFacultyScopes.Add(scope);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        public async Task<bool> RemoveFacultyFromScope(string eventId, string facultyId)
+        {
+            var scope = _context.EventFacultyScopes
+                .FirstOrDefault(s => s.EventId == eventId && s.FacultyId == facultyId);
+            if (scope == null) return false;
+            _context.EventFacultyScopes.Remove(scope);
+            return await _context.SaveChangesAsync() > 0;
+        }
+        public List<Faculty> GetFacultiesInScope(string eventId)
+        {
+            var facultyIds = _context.EventFacultyScopes
+                .Where(s => s.EventId == eventId)
+                .Select(s => s.FacultyId)
+                .ToList();
+            if (facultyIds.Count == 0)
+            {
+                throw new Exception("No faculties found in the scope of this event.");
+            }
+            var faculties = new List<Faculty>();
+            foreach (var facultyId in facultyIds)
+            {
+                var faculty = _context.Faculties.Find(facultyId);
+                if (faculty == null)
+                {
+                    throw new Exception("Faculty not found with id " + facultyId);
+                }
+                faculties.Add(faculty);
+            }
+            return faculties;
+        }
+
+        public async Task<bool> CancelEvent(string eventId)
+        {
+            var eventToCancel = _context.Events.Find(eventId);
+            if (eventToCancel == null)
+            {
+                throw new Exception("Event not found");
+            }
+            eventToCancel.IsCancelled = true;
+            _context.Events.Update(eventToCancel);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> OpenEventForRegistration(string eventId)
+        {
+            var eventToOpen = _context.Events.Find(eventId);
+            if (eventToOpen == null)
+            {
+                throw new Exception("Event not found");
+            }
+            if (eventToOpen.IsCancelled)
+            {
+                throw new Exception("Cannot open registration for a cancelled event");
+            }
+            eventToOpen.IsOpenedForRegistration = true;
+            _context.Events.Update(eventToOpen);
+            return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> CloseEventForRegistration(string eventId)
+        {
+            var eventToClose = _context.Events.Find(eventId);
+            if (eventToClose == null)
+            {
+                throw new Exception("Event not found");
+            }
+            if (eventToClose.IsCancelled)
+            {
+                throw new Exception("Cannot close registration for a cancelled event");
+            }
+            eventToClose.IsOpenedForRegistration = false;
+            _context.Events.Update(eventToClose);
             return await _context.SaveChangesAsync() > 0;
         }
     }
