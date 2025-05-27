@@ -48,7 +48,7 @@ namespace DUTEventManagementAPI.Data
                 Id = "4",
                 Name = "Union",
                 NormalizedName = "Union"
-            }); 
+            });
             //builder.Entity<AppUser>();
             //.HasMany(e => e.Events)
             //.WithOne(e => e.AppUser)
