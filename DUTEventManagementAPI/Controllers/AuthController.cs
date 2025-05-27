@@ -40,7 +40,7 @@ namespace DUTEventManagementAPI.Controllers
             if (result)
                 return Ok(new { message = "User registered successfully" });
 
-            return BadRequest(new {message = "Register failed"});
+            return BadRequest(new { message = "Register failed" });
         }
 
         [HttpPost("Login")]
@@ -52,7 +52,7 @@ namespace DUTEventManagementAPI.Controllers
                 return Ok(result);
 
             return Unauthorized(new { message = "Login failed" });
-                
+
         }
 
         [HttpPost("RefreshToken")]
@@ -77,7 +77,7 @@ namespace DUTEventManagementAPI.Controllers
             LinkGenerator linkGenerator = HttpContext.RequestServices.GetRequiredService<LinkGenerator>();
 
 
-            var properties = _authService.ConfigureGoogleAuthenticationProperties(
+            var properties = _authService.ConfigureExternalAuthenticationProperties(
                 "Google",
                 linkGenerator.GetPathByName(HttpContext, "GoogleLoginCallback") + $"?returnUrl={returnUrl}"
             );
@@ -103,6 +103,78 @@ namespace DUTEventManagementAPI.Controllers
                 return Redirect(returnUrl);
 
             return BadRequest(new { authResult, message = "No return url" });
+        }
+
+        [HttpGet("Roles/{userId}")]
+        public IActionResult GetUserRoles(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return BadRequest("User ID is required");
+            }
+            try
+            {
+                var roles = _authService.GetUserRoles(userId);
+                if (roles == null || roles.Count == 0)
+                {
+                    return NotFound("No roles found for this user");
+                }
+                return Ok(roles);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"Error retrieving user: {ex.Message}" });
+            }      
+        }
+        [HttpPost("Roles/{userId}/Add")]
+        public async Task<IActionResult> AddUserToRole(string userId, [FromBody] string roleName)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(roleName))
+            {
+                return BadRequest("User ID and role name are required");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var result = await _authService.AddUserToRole(userId, roleName);
+                if (!result)
+                {
+                    return BadRequest(new { message = "Failed to add user to role" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"Error retrieving user: {ex.Message}" });
+            }
+            return Ok(new { message = "User added to role successfully" });
+        }
+        [HttpPost("Roles/{userId}/Remove")]
+        public async Task<IActionResult> RemoveUserFromRole(string userId, [FromBody] string roleName)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(roleName))
+            {
+                return BadRequest("User ID and role name are required");
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            try
+            {
+                var result = await _authService.RemoveUserFromRole(userId, roleName);
+                if (!result)
+                {
+                    return BadRequest(new { message = "Failed to remove user from role" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = $"Error retrieving user: {ex.Message}" });
+            }
+            return Ok(new { message = "User removed from role successfully" });
         }
     }
 }
