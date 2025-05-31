@@ -9,6 +9,7 @@ namespace DUTEventManagementAPI.Services.Interfaces
         List<Event> GetEventsUserMarkedAttendanceFor(string userId);
         List<AppUser> GetUsersMarkedAttendanceForEvent(string eventId);
         Attendance MarkAttendance(string registrationId, double latitude, double longitude);
+        Attendance MarkAttendanceByRegistration(string registrationId);
         bool RemoveAttendance(string attendanceId);
     }
 }

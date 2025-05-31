@@ -32,11 +32,46 @@ namespace DUTEventManagementAPI.Services
             if (!isInCheckInArea)
                 throw new Exception("User is not in the check-in area");
 
+            // Check if the user has already marked attendance for this event
+            var existingAttendance = _context.Attendances
+                .FirstOrDefault(a => a.RegistrationId == registrationId);
+            if (existingAttendance != null)
+            {
+                throw new Exception("Attendance already marked for this registration");
+            }
+
             var attendance = new Attendance
             {
                 RegistrationId = registrationId,
                 Latitude = latitude,
                 Longitude = longitude
+            };
+
+            _context.Attendances.Add(attendance);
+            _context.SaveChanges();
+            return attendance;
+        }
+        public Attendance MarkAttendanceByRegistration(string registrationId)
+        {
+            var registration = _context.Registrations.FirstOrDefault(r => r.RegistrationId == registrationId);
+            if (registration == null)
+                throw new Exception("Registration not found");
+            var eventDetails = _context.Events.FirstOrDefault(e => e.EventId == registration.EventId);
+            if (eventDetails == null)
+                throw new Exception("Event not found");
+
+            var existingAttendance = _context.Attendances
+                .FirstOrDefault(a => a.RegistrationId == registrationId);
+            if (existingAttendance != null)
+            {
+                throw new Exception("Attendance already marked for this registration");
+            }
+
+            var attendance = new Attendance
+            {
+                RegistrationId = registrationId,
+                Latitude = 0,
+                Longitude = 0 // Latitude and Longitude are not needed for QR registration
             };
 
             _context.Attendances.Add(attendance);
