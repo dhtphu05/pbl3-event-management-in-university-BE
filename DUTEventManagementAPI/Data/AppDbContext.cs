@@ -18,11 +18,85 @@ namespace DUTEventManagementAPI.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<EventImage> EventImages { get; set; }
         public DbSet<Attendance> Attendances { get; set; }
-
+        public DbSet<Faculty> Faculties { get; set; }
+        public DbSet<EventFacultyScope> EventFacultyScopes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // Seed faculties
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "101",
+                FacultyName = "K. Cơ khí",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "102",
+                FacultyName = "K. Công nghệ Thông tin",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "103",
+                FacultyName = "K. Cơ khí Giao thông",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "104",
+                FacultyName = "K. Công nghệ Nhiệt - Điện lạnh",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "105",
+                FacultyName = "K. Điện",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "106",
+                FacultyName = "K. Điện tử Viễn thông",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "107",
+                FacultyName = "K. Hóa",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "109",
+                FacultyName = "K. Xây dựng Cầu - Đường",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "110",
+                FacultyName = "K. Xây dựng Dân dụng - Công nghiệp",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "111",
+                FacultyName = "K. Xây dựng công trình thủy",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "117",
+                FacultyName = "K. Môi trường",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "118",
+                FacultyName = "K. Quản lý dự án",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "121",
+                FacultyName = "K. Kiến trúc",
+            });
+            builder.Entity<Faculty>().HasData(new Faculty
+            {
+                FacultyId = "123",
+                FacultyName = "K. Khoa học Công nghệ tiên tiến",
+            });
+
 
             // Seed 3 roles
             builder.Entity<IdentityRole>().HasData(new IdentityRole

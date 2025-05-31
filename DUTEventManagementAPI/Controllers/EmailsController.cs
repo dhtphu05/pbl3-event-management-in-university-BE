@@ -1,5 +1,4 @@
 ﻿using DUTEventManagementAPI.Models;
-using DUTEventManagementAPI.Services;
 using DUTEventManagementAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

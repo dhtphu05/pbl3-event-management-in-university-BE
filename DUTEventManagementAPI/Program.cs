@@ -104,6 +104,7 @@ builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IEventImageService, EventImageService>();
+builder.Services.AddScoped<IFacultyService, FacultyService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 // email template
