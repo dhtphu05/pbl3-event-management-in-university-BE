@@ -20,6 +20,8 @@ namespace DUTEventManagementAPI.Data
         public DbSet<Attendance> Attendances { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<EventFacultyScope> EventFacultyScopes { get; set; }
+        public DbSet<Badge> Badges { get; set; }
+        public DbSet<UserBadge> UserBadges { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
