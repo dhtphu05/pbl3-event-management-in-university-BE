@@ -4,6 +4,7 @@ using DUTEventManagementAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DUTEventManagementAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250527073559_Add faculties")]
+    partial class Addfaculties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,28 +139,6 @@ namespace DUTEventManagementAPI.Migrations
                     b.ToTable("Attendances");
                 });
 
-            modelBuilder.Entity("DUTEventManagementAPI.Models.Badge", b =>
-                {
-                    b.Property<string>("BadgeId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BadgeText")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EventId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("IconUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("BadgeId");
-
-                    b.ToTable("Badges");
-                });
-
             modelBuilder.Entity("DUTEventManagementAPI.Models.Category", b =>
                 {
                     b.Property<string>("CategoryId")
@@ -206,15 +187,6 @@ namespace DUTEventManagementAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsCancelled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsOpenedForRegistration")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRestricted")
-                        .HasColumnType("bit");
-
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
 
@@ -230,10 +202,6 @@ namespace DUTEventManagementAPI.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("PlanLink")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Scope")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -261,24 +229,6 @@ namespace DUTEventManagementAPI.Migrations
                     b.HasKey("EventCategoryId");
 
                     b.ToTable("EventCategories");
-                });
-
-            modelBuilder.Entity("DUTEventManagementAPI.Models.EventFacultyScope", b =>
-                {
-                    b.Property<string>("EventFacultyScopeId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("EventId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FacultyId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("EventFacultyScopeId");
-
-                    b.ToTable("EventFacultyScopes");
                 });
 
             modelBuilder.Entity("DUTEventManagementAPI.Models.EventImage", b =>
@@ -433,24 +383,6 @@ namespace DUTEventManagementAPI.Migrations
                     b.HasKey("TimeSlotId");
 
                     b.ToTable("TimeSlots");
-                });
-
-            modelBuilder.Entity("DUTEventManagementAPI.Models.UserBadge", b =>
-                {
-                    b.Property<string>("UserBadgeId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BadgeId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserBadgeId");
-
-                    b.ToTable("UserBadges");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

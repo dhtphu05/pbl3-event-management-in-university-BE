@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DUTEventManagementAPI.Services.Interfaces;
+using System;
 
 namespace DUTEventManagementAPI.Services
 {

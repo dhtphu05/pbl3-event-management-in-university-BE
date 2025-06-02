@@ -1,5 +1,6 @@
 ﻿using Azure;
 using DUTEventManagementAPI.Models;
+using DUTEventManagementAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
@@ -15,17 +16,61 @@ namespace DUTEventManagementAPI.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         private readonly IConfiguration _config;
 
-        public AuthService(UserManager<AppUser> userManager, IConfiguration config, SignInManager<AppUser> signInManager)
+        public AuthService(UserManager<AppUser> userManager, IConfiguration config, SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _config = config;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
-        public AuthenticationProperties ConfigureGoogleAuthenticationProperties(string provider, string redirectUri)
+        public async Task<bool> AddUserToRole(string userId, string roleName)
+        {
+            var user = _userManager.FindByIdAsync(userId).Result;
+            if (user == null)
+            {
+                Console.WriteLine($"User with ID {userId} not found");
+                throw new Exception($"User with ID {userId} not found");
+            }
+            if (string.IsNullOrEmpty(roleName))
+            {
+                Console.WriteLine("Role name is null or empty");
+                throw new ArgumentException("Role name cannot be null or empty", nameof(roleName));
+            }
+            if (!await _roleManager.RoleExistsAsync(roleName))
+            {
+                Console.WriteLine($"Role {roleName} does not exist");
+                throw new Exception($"Role {roleName} does not exist");
+            }
+            return await _userManager.AddToRoleAsync(user, roleName) == IdentityResult.Success;
+        }
+
+        public async Task<bool> RemoveUserFromRole(string userId, string roleName)
+        {
+            var user = _userManager.FindByIdAsync(userId).Result;
+            if (user == null)
+            {
+                Console.WriteLine($"User with ID {userId} not found");
+                throw new Exception($"User with ID {userId} not found");
+            }
+            if (string.IsNullOrEmpty(roleName))
+            {
+                Console.WriteLine("Role name is null or empty");
+                throw new ArgumentException("Role name cannot be null or empty", nameof(roleName));
+            }
+            if (!await _roleManager.RoleExistsAsync(roleName))
+            {
+                Console.WriteLine($"Role {roleName} does not exist");
+                throw new Exception($"Role {roleName} does not exist");
+            }
+            return await _userManager.RemoveFromRoleAsync(user, roleName) == IdentityResult.Success;
+        }
+
+        public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirectUri)
         {
             Console.WriteLine(provider);
             Console.WriteLine(redirectUri);
@@ -69,6 +114,18 @@ namespace DUTEventManagementAPI.Services
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public List<string> GetUserRoles(string userId)
+        {
+            var user = _userManager.FindByIdAsync(userId).Result;
+            if (user == null)
+            {
+                Console.WriteLine($"User with ID {userId} not found");
+                throw new Exception($"User with ID {userId} not found");
+            }
+            var roles = _userManager.GetRolesAsync(user).Result;
+            return roles.ToList();
         }
 
         public async Task<LoginResponse> Login(string email, string password)
@@ -126,6 +183,7 @@ namespace DUTEventManagementAPI.Services
             {
                 var newUser = new AppUser
                 {
+                    FullName = claimsPrincipal?.FindFirstValue(ClaimTypes.Name) ?? string.Empty,
                     UserName = email,
                     Email = email,
                     EmailConfirmed = true,
@@ -140,6 +198,7 @@ namespace DUTEventManagementAPI.Services
                     throw new Exception("User creation failed");
                 }
                 user = newUser;
+                await _userManager.AddToRoleAsync(user, "User");
             }
 
             var info = new UserLoginInfo("Google", 

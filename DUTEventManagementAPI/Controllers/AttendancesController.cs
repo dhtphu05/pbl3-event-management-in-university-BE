@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DUTEventManagementAPI.Models;
-using DUTEventManagementAPI.Services;
+using DUTEventManagementAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DUTEventManagementAPI.Controllers
 {
@@ -44,6 +45,24 @@ namespace DUTEventManagementAPI.Controllers
             try
             {
                 var markedAttendance = _attendanceService.MarkAttendance(attendance.RegistrationId, attendance.Latitude, attendance.Longitude);
+                return CreatedAtAction(nameof(GetAllAttendances), new { id = markedAttendance.AttendanceId }, markedAttendance);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
+            }
+        }
+        [Authorize(Roles = "Organizer")]
+        [HttpPost("MarkByQRRegistration/{registrationId}")]
+        public IActionResult MarkAttendanceByQR(string registrationId)
+        {
+            if (string.IsNullOrEmpty(registrationId))
+            {
+                return BadRequest("Registration ID is required");
+            }
+            try
+            {
+                var markedAttendance = _attendanceService.MarkAttendanceByRegistration(registrationId); // latitude and longitude are not needed for QR registration
                 return CreatedAtAction(nameof(GetAllAttendances), new { id = markedAttendance.AttendanceId }, markedAttendance);
             }
             catch (Exception ex)

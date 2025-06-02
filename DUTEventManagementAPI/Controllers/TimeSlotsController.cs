@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using DUTEventManagementAPI.Services;
 using DUTEventManagementAPI.Models;
+using DUTEventManagementAPI.Services.Interfaces;
 
 namespace DUTEventManagementAPI.Controllers
 {

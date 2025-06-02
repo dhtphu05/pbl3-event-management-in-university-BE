@@ -1,6 +1,6 @@
 ﻿using DUTEventManagementAPI.Models;
 
-namespace DUTEventManagementAPI.Services
+namespace DUTEventManagementAPI.Services.Interfaces
 {
     public interface IAttendanceService
     {
@@ -9,6 +9,7 @@ namespace DUTEventManagementAPI.Services
         List<Event> GetEventsUserMarkedAttendanceFor(string userId);
         List<AppUser> GetUsersMarkedAttendanceForEvent(string eventId);
         Attendance MarkAttendance(string registrationId, double latitude, double longitude);
+        Attendance MarkAttendanceByRegistration(string registrationId);
         bool RemoveAttendance(string attendanceId);
     }
 }

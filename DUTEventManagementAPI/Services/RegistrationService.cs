@@ -1,5 +1,6 @@
 ﻿using DUTEventManagementAPI.Models;
 using DUTEventManagementAPI.Data;
+using DUTEventManagementAPI.Services.Interfaces;
 namespace DUTEventManagementAPI.Services
 {
     public class RegistrationService : IRegistrationService
@@ -15,10 +16,29 @@ namespace DUTEventManagementAPI.Services
         }
         public Registration RegisterUserForEvent(string userId, string eventId)
         {
+            var user = _context.AppUsers.Find(userId);
+            if (user == null)
+                throw new Exception("User not found");
+
             var existingRegistration = _context.Registrations
-                .FirstOrDefault(r => r.UserId == userId && r.EventId == eventId);
+                .FirstOrDefault(r => r.UserId == userId && r.EventId == eventId);   
             if (existingRegistration != null)
                 throw new Exception("User already registered for this event");
+            
+            var eventToRegister = _context.Events.Find(eventId);
+            if (eventToRegister == null)
+                throw new Exception("Event not found");
+            if (!eventToRegister.IsOpenedForRegistration)
+                throw new Exception("Event is not open for registration");
+
+            if (eventToRegister.IsRestricted)
+            {
+                bool userFacultyIsInEventScope = _context.EventFacultyScopes
+                    .Any(s => s.EventId == eventId && s.FacultyId == user.FacultyId);
+                if (!userFacultyIsInEventScope)
+                    throw new Exception("User is not in attendant scope");
+            }
+
             var registration = new Registration
             {
                 UserId = userId,
