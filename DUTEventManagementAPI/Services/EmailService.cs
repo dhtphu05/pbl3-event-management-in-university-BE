@@ -72,8 +72,26 @@ namespace DUTEventManagementAPI.Services
                     Console.WriteLine(recipient);
                 }
 
+                var icsContent = IcsGenerator.GenerateIcsFile(eventModel);
+                var calendarFolder = Path.Combine(Directory.GetCurrentDirectory(), "ICalendar");
+
+                if (!Directory.Exists(calendarFolder))
+                    Directory.CreateDirectory(calendarFolder);
+
+                var icsFileName = $"event_{eventModel.EventId}.ics";
+                var icsFilePath = Path.Combine(calendarFolder, icsFileName);
+
+                IcsGenerator.SaveIcsFile(icsContent, icsFilePath);
+
+                Console.WriteLine($"ICS file saved at: {icsFilePath}");
+
+                // Đọc file ICS thành byte array 
+                byte[] icsFileBytes = await File.ReadAllBytesAsync(icsFilePath);
+
+                // Tạo message với attachment trực tiếp từ byte array
                 var message = new Message(recipients, subject, htmlContent);
-                var emailMessage = CreateEmailMessageWithHtml(message);
+                var emailMessage = CreateEmailMessageWithHtmlAndAttachment(message, icsFileBytes, icsFileName);
+
                 Send(emailMessage);
                 Console.WriteLine("Email sent successfully");
             }
@@ -101,7 +119,52 @@ namespace DUTEventManagementAPI.Services
             emailMessage.From.Add(new MailboxAddress("DUT Event Management", _emailConfig.From));
             emailMessage.To.AddRange(message.To);
             emailMessage.Subject = message.Subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message.Content };
+
+            var builder = new BodyBuilder
+            {
+                HtmlBody = message.Content
+            };
+
+            if (message.Attachments != null && message.Attachments.Any())
+            {
+                byte[] fileBytes;
+                foreach (var attachment in message.Attachments)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        attachment.CopyTo(ms);
+                        fileBytes = ms.ToArray();
+                    }
+                    builder.Attachments.Add(attachment.FileName, fileBytes, ContentType.Parse(attachment.ContentType));
+                }
+            }
+
+            emailMessage.Body = builder.ToMessageBody();
+
+            return emailMessage;
+        }
+
+        // tạo email với attachment từ byte array
+        private MimeMessage CreateEmailMessageWithHtmlAndAttachment(Message message, byte[] attachmentBytes, string fileName)
+        {
+            var emailMessage = new MimeMessage();
+            emailMessage.From.Add(new MailboxAddress("DUT Event Management", _emailConfig.From));
+            emailMessage.To.AddRange(message.To);
+            emailMessage.Subject = message.Subject;
+
+            var builder = new BodyBuilder
+            {
+                HtmlBody = message.Content
+            };
+
+            // Thêm ICS file attachment
+            if (attachmentBytes != null && attachmentBytes.Length > 0)
+            {
+                builder.Attachments.Add(fileName, attachmentBytes, ContentType.Parse("text/calendar"));
+            }
+
+            emailMessage.Body = builder.ToMessageBody();
+
             return emailMessage;
         }
 
@@ -111,11 +174,9 @@ namespace DUTEventManagementAPI.Services
 
             try
             {
-                // Tạo HTTP context với request services
                 var httpContext = new DefaultHttpContext();
                 httpContext.RequestServices = _serviceProvider;
 
-                // Tạo action context
                 var actionContext = new ActionContext(
                     httpContext,
                     httpContext.GetRouteData() ?? new RouteData(),

@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTO\" />
+    <Folder Include="ICalendar\" />
     <Folder Include="Uploads\" />
   </ItemGroup>
 
