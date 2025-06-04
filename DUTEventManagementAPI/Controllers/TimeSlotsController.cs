@@ -72,5 +72,36 @@ namespace DUTEventManagementAPI.Controllers
             }
             return NoContent();
         }
+        [HttpPut("{timeSlotId}")]
+        public IActionResult UpdateTimeSlot(string timeSlotId, [FromBody] TimeSlot timeSlotToUpdate)
+        {
+            if (timeSlotToUpdate == null)
+            {
+                return BadRequest("Time slot data is null");
+            }
+            try
+            {
+                var result = _timeSlotService.UpdateTimeSlot(timeSlotId, timeSlotToUpdate);
+                if (!result)
+                {
+                    return NotFound("Time slot not found");
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
+            }
+        }
+        [HttpGet("Title/{searchString}")]
+        public IActionResult GetTimeSlotByTitle(string searchString)
+        {
+            var timeSlot = _timeSlotService.GetTimeSlotByTitle(searchString);
+            if (timeSlot == null)
+            {
+                return NotFound("No time slot found with the given title");
+            }
+            return Ok(timeSlot);
+        }
     }
 }
