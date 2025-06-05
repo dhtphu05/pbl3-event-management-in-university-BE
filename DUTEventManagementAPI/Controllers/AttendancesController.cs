@@ -18,22 +18,37 @@ namespace DUTEventManagementAPI.Controllers
         [HttpGet]
         public IActionResult GetAllAttendances()
         {
-            var attendances = _attendanceService.GetAllAttendances();
-            if (attendances == null || attendances.Count == 0)
+            try
             {
-                return NotFound("No attendances found");
+                var attendances = _attendanceService.GetAllAttendances();
+                if (attendances == null || attendances.Count == 0)
+                {
+                    return NotFound("No attendances found");
+                }
+                return Ok(attendances);
             }
-            return Ok(attendances);
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
+            }
         }
         [HttpGet("{registrationId}")]
         public IActionResult GetAttendancesByRegistrationId(string registrationId)
         {
-            var attendances = _attendanceService.GetAttendanceByRegistrationId(registrationId);
-            if (attendances == null)
+            try
             {
-                return NotFound("No attendances found for this registration ID");
+                var attendances = _attendanceService.GetAttendanceByRegistrationId(registrationId);
+                if (attendances == null)
+                {
+                    return NotFound("No attendances found for this registration ID");
+                }
+                return Ok(attendances);
             }
-            return Ok(attendances);
+            catch (Exception ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
+            }
+                
         }
         [HttpPost("Mark")]
         public IActionResult MarkAttendance([FromBody] Attendance attendance)

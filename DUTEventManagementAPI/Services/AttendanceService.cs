@@ -17,7 +17,12 @@ namespace DUTEventManagementAPI.Services
 
         public List<Attendance> GetAllAttendances()
         {
-            return _context.Attendances.ToList();
+            var attendances = _context.Attendances.ToList();
+            if (attendances == null || !attendances.Any())
+            {
+                throw new Exception("No attendances found");
+            }
+            return attendances;
         }
 
         public Attendance MarkAttendance(string registrationId, double latitude, double longitude)
