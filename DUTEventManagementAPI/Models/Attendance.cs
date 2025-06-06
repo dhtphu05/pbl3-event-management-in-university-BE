@@ -6,6 +6,6 @@
         public string RegistrationId { get; set; } = string.Empty;
         public double Latitude { get; set; }
         public double Longitude { get; set; }
-        public DateTime AttendanceDate { get; set; } = DateTime.UtcNow;
+        public DateTime AttendanceDate { get; set; } = DateTime.Now;
     }
 }
