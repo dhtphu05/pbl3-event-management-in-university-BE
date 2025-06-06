@@ -25,7 +25,7 @@ namespace DUTEventManagementAPI.Services
         {
             var result = new CreateEventResponse();
 
-            // Tìm các sự kiện trong bán kính 1km
+            // Tìm các sự kiện trong bán kính 500m
             var allEvents = GetAllEvents();
             foreach (var e in allEvents)
             {
@@ -33,7 +33,7 @@ namespace DUTEventManagementAPI.Services
                 bool isTimeOverlap = (newEvent.StartDate < e.StartDate && newEvent.EndDate > e.StartDate)
                                   || (newEvent.StartDate < e.EndDate && newEvent.EndDate > e.EndDate);
 
-                if (distance <= 1.0)
+                if (distance <= 0.5)
                 {
                     if (isTimeOverlap)
                         throw new Exception("Trùng địa điểm và khung giờ với một sự kiện khác.");
