@@ -36,11 +36,11 @@ namespace DUTEventManagementAPI.Services
                 if (distance <= 1.0)
                 {
                     if (isTimeOverlap)
-                        result.Errors.Add("Trùng địa điểm và khung giờ với một sự kiện khác.");
+                        throw new Exception("Trùng địa điểm và khung giờ với một sự kiện khác.");
                 }
                 if (isTimeOverlap && e.HostId == newEvent.HostId)
                 {
-                    result.Errors.Add("Người tổ chức đã có sự kiện khác trong cùng khung giờ.");
+                    throw new Exception("Bạn đã có một sự kiện khác trùng khung giờ với sự kiện này.");
                 }
             }
 

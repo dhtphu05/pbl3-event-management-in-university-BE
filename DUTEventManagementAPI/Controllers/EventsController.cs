@@ -45,17 +45,24 @@ namespace DUTEventManagementAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateEvent([FromBody] Event newEvent)
         {
-            if (newEvent == null)
+            try
             {
-                return BadRequest("Event data is null");
+                if (newEvent == null)
+                {
+                    return BadRequest("Event data is null");
+                }
+                newEvent.HostId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+                var result = await _eventService.CreateEventAsync(newEvent);
+                if (!result.Succeeded)
+                {
+                    return BadRequest("Event creation failed");
+                }
+                return CreatedAtAction(nameof(GetEventById), new { eventId = newEvent.EventId }, newEvent);
             }
-            newEvent.HostId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
-            var result = await _eventService.CreateEventAsync(newEvent);
-            if (!result.Succeeded)
+            catch (Exception ex)
             {
-                return BadRequest("Event creation failed");
+                return BadRequest($"Error creating event: {ex.Message}");
             }
-            return CreatedAtAction(nameof(GetEventById), new { eventId = newEvent.EventId }, newEvent);
         }
         [HttpPut("{eventId}")]
         public IActionResult UpdateEventAsync(string eventId, [FromBody] Event updatedEvent)
