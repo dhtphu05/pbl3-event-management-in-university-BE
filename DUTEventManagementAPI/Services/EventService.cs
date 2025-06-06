@@ -33,7 +33,7 @@ namespace DUTEventManagementAPI.Services
                 bool isTimeOverlap = (newEvent.StartDate < e.StartDate && newEvent.EndDate > e.StartDate)
                                   || (newEvent.StartDate < e.EndDate && newEvent.EndDate > e.EndDate);
 
-                if (distance <= 0.5)
+                if (distance <= 0.1)
                 {
                     if (isTimeOverlap)
                         throw new Exception("Trùng địa điểm và khung giờ với một sự kiện khác.");
