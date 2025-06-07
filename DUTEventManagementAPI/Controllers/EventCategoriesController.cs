@@ -24,20 +24,23 @@ namespace DUTEventManagementAPI.Controllers
             return Ok(eventCategories);
         }
         [HttpPost("{eventId}/Categories")]
-        public IActionResult AssignCategoryToEvent(string eventId, [FromBody] string categoryName)
+        public IActionResult AssignCategoryToEvent(string eventId, [FromBody] List<string> categoriesName)
         {
-            if (string.IsNullOrEmpty(eventId) || string.IsNullOrEmpty(categoryName))
+            if (string.IsNullOrEmpty(eventId) || categoriesName == null || categoriesName.Count == 0)
             {
-                return BadRequest("Event ID or Category Name is null");
+                return BadRequest("Event ID or Category Names are null");
             }
             try
             {
-                var eventCategory = _eventCategoryService.CreateEventCategory(eventId, categoryName);
-                if (eventCategory == null)
+                foreach (var categoryName in categoriesName)
                 {
-                    return NotFound("Event or Category not found");
+                    if (string.IsNullOrEmpty(categoryName))
+                    {
+                        return BadRequest("Category Name is null or empty");
+                    }
+                    _eventCategoryService.CreateEventCategory(eventId, categoryName);
                 }
-                return Ok(eventCategory);
+                return Ok("Categories assigned to event successfully");
             }
             catch (Exception ex)
             {
