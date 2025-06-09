@@ -53,6 +53,23 @@ namespace DUTEventManagementAPI.Services
             };
 
             _context.Attendances.Add(attendance);
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == registration.UserId);
+            if (user == null )
+                throw new Exception("User not found");
+            // if event has a badge, assign it to the user
+            var existingBadge = _context.Badges.FirstOrDefault(b => b.EventId == eventDetails.EventId) ?? throw new Exception("Event does not have a badge");
+            if (existingBadge != null)
+            {
+                if(!_context.UserBadges.Any(b => b.UserId == user.Id && b.BadgeId == existingBadge.BadgeId))
+                {
+                    _context.UserBadges.Add(new UserBadge
+                    {
+                        UserId = user.Id,
+                        BadgeId = existingBadge.BadgeId
+                    });
+                }
+            }
             _context.SaveChanges();
             return attendance;
         }
@@ -80,6 +97,24 @@ namespace DUTEventManagementAPI.Services
             };
 
             _context.Attendances.Add(attendance);
+
+            var user = _context.Users.FirstOrDefault(u => u.Id == registration.UserId);
+            if (user == null)
+                throw new Exception("User not found");
+            // if event has a badge, assign it to the user
+            var existingBadge = _context.Badges.FirstOrDefault(b => b.EventId == eventDetails.EventId) ?? throw new Exception("Event does not have a badge");
+            if (existingBadge != null)
+            {
+                if (!_context.UserBadges.Any(b => b.UserId == user.Id && b.BadgeId == existingBadge.BadgeId))
+                {
+                    _context.UserBadges.Add(new UserBadge
+                    {
+                        UserId = user.Id,
+                        BadgeId = existingBadge.BadgeId
+                    });
+                }
+            }
+
             _context.SaveChanges();
             return attendance;
         }
