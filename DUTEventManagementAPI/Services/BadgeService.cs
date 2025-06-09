@@ -26,24 +26,19 @@ namespace DUTEventManagementAPI.Services
         }
         public async Task<Badge> CreateBadgeAsync(Badge badge)
         {
-            _context.Badges.Add(badge);
-            if (badge.EventId != null)
-            {
-                var eventExists = await _context.Events.AnyAsync(e => e.EventId == badge.EventId);
-                if (!eventExists)
-                {
-                    throw new Exception("Event associated with the badge does not exist.");
-                }
-            }
-            else if (string.IsNullOrEmpty(badge.EventId))
-            {
-                throw new ArgumentException("Event ID cannot be null or empty for a badge.");
-            }
             if (string.IsNullOrEmpty(badge.BadgeText))
             {
                 throw new ArgumentException("Badge text cannot be null or empty.");
             }
+            var eventExists = await _context.Events.AnyAsync(e => e.EventId == badge.EventId);
+            if (!eventExists)
+            {
+                throw new Exception($"Cannot create badge. Event with ID '{badge.EventId}' does not exist.");
+            }
+            
+            _context.Badges.Add(badge);
             await _context.SaveChangesAsync();
+
             return badge;
         }
         public async Task<Badge> UpdateBadgeAsync(string badgeId, Badge updatedBadge)
